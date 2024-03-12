@@ -55,7 +55,7 @@ main {
 }
 
 .write-btn {
-  width: 80px;
+  width: 90px;
   height: 40px;
   background-color: var(--button-primary);
   color: white;
@@ -63,8 +63,8 @@ main {
   border-radius: 20px;
   font-size: 15px;
   position: fixed;
-  bottom: 120px;
-  right: 20px;
+  bottom: 110px;
+  right: 15px;
 
   display: flex;
   justify-content: center;
