@@ -4,7 +4,7 @@ main {
 
 .items-list {
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   border-bottom: 1px solid #ededef;
   padding: 20px 0 20px 0;
@@ -36,6 +36,13 @@ main {
 
 .items-list__info div {
   margin-top: 10px;
+}
+
+.items-list__info-title {
+  cursor: pointer;
+}
+.items-list__info-title:active {
+  color: tomato;
 }
 
 .items-list__info-meta {
