@@ -4,7 +4,7 @@ main {
 
 .items-list {
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   border-bottom: 1px solid #ededef;
   padding: 20px 0 20px 0;
@@ -38,6 +38,13 @@ main {
   margin-top: 10px;
 }
 
+.items-list__info-title {
+  cursor: pointer;
+}
+.items-list__info-title:active {
+  color: tomato;
+}
+
 .items-list__info-meta {
   font-size: smaller;
   color: rgba(0, 0, 0, 0.5);
@@ -48,7 +55,7 @@ main {
 }
 
 .write-btn {
-  width: 80px;
+  width: 90px;
   height: 40px;
   background-color: var(--button-primary);
   color: white;
@@ -56,8 +63,8 @@ main {
   border-radius: 20px;
   font-size: 15px;
   position: fixed;
-  bottom: 120px;
-  right: 20px;
+  bottom: 110px;
+  right: 15px;
 
   display: flex;
   justify-content: center;
