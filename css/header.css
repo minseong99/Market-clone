@@ -46,6 +46,7 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .menu-bar__icons {
@@ -56,4 +57,5 @@ header {
 .menu-bar__icons img {
   width: 25px;
   margin-right: 10px;
+  cursor: pointer;
 }
