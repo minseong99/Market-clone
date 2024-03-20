@@ -11,8 +11,8 @@ cur = con.cursor()
 cur.execute(f"""
             CREATE TABLE IF NOT EXISTS items (
                 id INTEGER PRIMARY KEY,
-                title TEXT NOT NULL,
                 image BLOB,
+                title TEXT NOT NULL,
                 price INTEGER NOT NULL,
                 description TEXT,
                 place TEXT NOT NULL,
@@ -72,6 +72,19 @@ def get_image(item_id):
     
     return Response(content=bytes.fromhex(image_bytes), media_type="image/*")
     
+@app.post("/signup")
+#항상 회원가입이 되기때문에 회원이 아니면 회원가입 하는 로직 짜기
+def signup(id:Annotated[str, Form()],
+           password:Annotated[str,Form()],
+           name:Annotated[str, Form()],
+           email:Annotated[str, Form()]):
+    
+    cur.execute(f"""
+                INSERT INTO users(id,name,email,password)
+                VALUES('{id}', '{name}', '{email}', '{password}')
+                """)
+    con.commit()
+    return "200"
 
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
