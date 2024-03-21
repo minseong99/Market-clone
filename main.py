@@ -1,7 +1,9 @@
-from fastapi import FastAPI, UploadFile, Form, Response
+from fastapi import FastAPI, UploadFile, Form, Response, Depends
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
+from fastapi_login import LoginManager
+from fastapi_login.exceptions import InvalidCredentialsException
 from typing import Annotated
 import sqlite3
 
@@ -22,13 +24,68 @@ cur.execute(f"""
 
 app = FastAPI()
 
+#SECRET: access token을 어떻게 인코딩 할지 정하는 것, 언제든지 디코딩도 가능 즉, SECRET이 노출되었을때 언제든지 알 수 있음
+SECRET = "super-coding"
+manager = LoginManager(SECRET, "/login")
+
+#로그인 매니저가 키를 같이 조회함
+@manager.user_loader()
+def query_user(data):
+    WHERE_STATEMENTS = f'id="{data}"'
+    if type(data) == dict:
+        WHERE_STATEMENTS = f'''id="{data['id']}"'''
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
+    user = cur.execute(f"""
+                       SELECT * FROM users WHERE {WHERE_STATEMENTS}
+                       """).fetchone()
+    return user
+
+@app.post("/login")
+def login(id:Annotated[str, Form()],
+         password:Annotated[str, Form()]):
+    user = query_user(id)
+    if not user:
+        raise InvalidCredentialsException # 401을 자동으로 생성
+    elif password != user["password"]:
+        raise InvalidCredentialsException
+    #200으로 리턴을안줘도 status는 200이 된다.
+    
+    #jWT방식은 토큰안에 정보가 담겨있음
+    #즉, 서버가 토큰이 맞는지 안맞는지만 검증하고 토큰이 맞으면 
+    #그 사람의 정보가 들어있다! 굳이 db를 조회할 필요 x 
+    access_token = manager.create_access_token(data={
+        "sub":{
+            "id":user["id"],
+            "name":user["name"],
+            "email":user["email"]
+        }
+    })
+    return {"access_token":access_token}
+    
+
+@app.post("/signup")
+#항상 회원가입이 되기때문에 회원이 아니면 회원가입 하는 로직 짜기
+def signup(id:Annotated[str, Form()],
+           password:Annotated[str,Form()],
+           name:Annotated[str, Form()],
+           email:Annotated[str, Form()]):
+    
+    cur.execute(f"""
+                INSERT INTO users(id,name,email,password)
+                VALUES('{id}', '{name}', '{email}', '{password}')
+                """)
+    con.commit()
+    return "200"
+
 @app.post('/items')
 async def create_item(image:UploadFile, 
                 title:Annotated[str, Form()],
                 price:Annotated[int, Form()],
                 description:Annotated[str, Form()],
                 place:Annotated[str, Form()],
-                insertAt:Annotated[int, Form()]):
+                insertAt:Annotated[int, Form()],
+                user=Depends(manager)):
     #image는 크기가 너무 커서 이미지를 읽을때까지 await
     image_bytes = await image.read()
     #hex는 16진법으로 바꾸어줌 
@@ -43,7 +100,7 @@ async def create_item(image:UploadFile,
     return '200'
 
 @app.get("/items")
-async def get_items():
+async def get_items(user=Depends(manager)): # user가 인증된 상태에서만 가능
     # 컬럼명도 같이 가져옴 
     con.row_factory = sqlite3.Row
     # db의 커서 갱신?? 느낌 
@@ -72,19 +129,7 @@ def get_image(item_id):
     
     return Response(content=bytes.fromhex(image_bytes), media_type="image/*")
     
-@app.post("/signup")
-#항상 회원가입이 되기때문에 회원이 아니면 회원가입 하는 로직 짜기
-def signup(id:Annotated[str, Form()],
-           password:Annotated[str,Form()],
-           name:Annotated[str, Form()],
-           email:Annotated[str, Form()]):
-    
-    cur.execute(f"""
-                INSERT INTO users(id,name,email,password)
-                VALUES('{id}', '{name}', '{email}', '{password}')
-                """)
-    con.commit()
-    return "200"
+
 
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
