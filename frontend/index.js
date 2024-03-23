@@ -71,28 +71,28 @@ const fetchList = async () => {
   });
   if (res.status === 401) {
     alert("로그인이 필요합니다.");
-    //window.location.pathname = "/login.html";
+    // window.location.pathname = "/login.html";
     return;
   }
+  createWriteBtn();
 
   const data = await res.json();
   renderData(data);
 };
 
-const handleWriteClick = async () => {
-  const accessToken = window.localStorage.getItem("token");
-  const res = await fetch("/items", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  if (res.status === 401) {
-    alert("로그인이 필요합니다.");
-    return;
-  }
-  window.location.pathname = "/write.html";
+const createWriteBtn = () => {
+  const main = document.querySelector("main");
+
+  const writeBtn = document.createElement("div");
+  writeBtn.className = "write-btn";
+
+  const a = document.createElement("a");
+  a.innerText = "글쓰기 +";
+  a.className = "write-btn__desc";
+  a.href = "/write.html";
+
+  main.appendChild(writeBtn);
+  writeBtn.appendChild(a);
 };
 
 fetchList();
-const writeBtn = document.querySelector(".write-btn");
-writeBtn.addEventListener("click", handleWriteClick);
