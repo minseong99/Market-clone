@@ -9,7 +9,7 @@ const calcTime = (timeStamp) => {
   const days = passedTime.getDate();
 
   if (months > 0) return ` ${months}달 전`;
-  else if (days > 0) return ` ${days}일 전`;
+  else if (days > 1) return ` ${days}일 전`;
   else if (hours > 0) return ` ${hours}시간 전`;
   else if (minutes > 0) return ` ${minutes}분 전`;
   else if (seconds > 0) return ` ${seconds}초 전`;
