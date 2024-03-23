@@ -78,7 +78,7 @@ def signup(id:Annotated[str, Form()],
     con.commit()
     return "200"
 
-@app.post('/items')
+@app.post("/items")
 async def create_item(image:UploadFile, 
                 title:Annotated[str, Form()],
                 price:Annotated[int, Form()],
