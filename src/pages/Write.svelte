@@ -1,6 +1,5 @@
 <script>
   import { getDatabase, ref, push } from "firebase/database";
-  import Footer from "../components/Footer.svelte";
   // 참조가 겹쳐서 ref를 refImage로 바꾸었다.
   import {
     getDownloadURL,
@@ -8,6 +7,7 @@
     ref as refImage,
     uploadBytes,
   } from "firebase/storage";
+  import Nav from "../components/Nav.svelte";
   let title;
   let price;
   let description;
@@ -82,7 +82,7 @@
   </div>
 </form>
 
-<Footer location="write" />
+<Nav location="write" />
 
 <style>
   .write-button {

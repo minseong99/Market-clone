@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "firebase": "^10.9.0",
+    "imagemin": "^8.0.1",
+    "imagemin-mozjpeg": "^10.0.0",
     "svelte-spa-router": "^4.0.1"
   }
 }
